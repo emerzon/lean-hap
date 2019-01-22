@@ -108,7 +108,14 @@ RUN set -xe \
 		--with-config-file-path="$PHP_INI_DIR" \
 		--with-config-file-scan-dir="$PHP_INI_DIR/conf.d" \
 		--enable-option-checking=fatal \
-		--with-mhash \
+		--enable-fpm --with-fpm-user=www-data --with-fpm-group=www-data --disable-cgi \
+		--enable-static \
+		--enable-soap \
+		--enable-pcntl \
+		--enable-embedded-mysqli \
+		--enable-exif \
+		--enable-wddx \
+		--enable-bcmath \
 		--enable-ftp \
 		--enable-mbstring \
 		--enable-mysqlnd \
@@ -117,6 +124,7 @@ RUN set -xe \
         --enable-sysvshm \
         --enable-sockets \
         --enable-calendar \
+		--with-mhash \
         --with-tidy \
         --with-gd \
         --with-webp-dir \
@@ -140,20 +148,17 @@ RUN set -xe \
 		--with-libzip \
 		--with-pdo-mysql \
 		--with-imap-ssl \
-		--enable-soap \
-		--enable-pcntl \
-		--enable-embedded-mysqli \
-		--enable-exif \
 		--with-gettext \
-		--enable-wddx \
-		--enable-bcmath \
 		--with-bz2 \
 		--with-ldap \
-		--enable-fpm --with-fpm-user=www-data --with-fpm-group=www-data --disable-cgi \
 	&& make -j "$(nproc)" \
 	&& make install \
 	&& pecl install igbinary imagick redis xdebug-2.7.0beta1 mcrypt-1.0.2 \
 	&& { find /usr/local/bin /usr/local/sbin -type f -perm +0111 -exec strip --strip-all '{}' + || true; }
+
+# TODO: Move extra extensions to static
+# http://php.net/manual/en/install.pecl.static.php
+
 
 #RUN pecl install ereg mysql mysqli pdo_mysql ssh2
 
