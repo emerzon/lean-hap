@@ -87,7 +87,7 @@ COPY --from=gccbuilder /usr/local/ /usr/
 RUN ln -s /usr/bin/gcc /usr/bin/cc
 
 ENV PHP_INI_DIR /etc/php
-ENV PHP_CFLAGS "-fstack-protector-strong -fpic -fpie -O3"
+ENV PHP_CFLAGS "-fstack-protector-strong -fpic -fpie -O3 -march=native"
 ENV PHP_VERSION 7.3.1
 ENV PHP_URL "https://secure.php.net/get/php-$PHP_VERSION.tar.xz/from/this/mirror"
 
@@ -109,7 +109,10 @@ RUN set -xe \
 		--with-config-file-scan-dir="$PHP_INI_DIR/conf.d" \
 		--enable-option-checking=fatal \
 		--enable-fpm --with-fpm-user=www-data --with-fpm-group=www-data --disable-cgi \
-		--enable-static \
+		--enable-static=curl \
+		--disable-shared \
+		--enable-shared=no \
+		--enable-embed=static \
 		--enable-soap \
 		--enable-pcntl \
 		--enable-embedded-mysqli \
