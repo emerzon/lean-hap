@@ -78,6 +78,7 @@ RUN apk add --nocache autoconf \
             tar \
             wget \
             xz \
+            php7-pear php7-openssl \
             argon2-dev libpng-dev freetype-dev libwebp-dev libjpeg-turbo-dev libxpm-dev libexif-dev \
             curl-dev dpkg-dev imagemagick-dev gd-dev libzip-dev libc-dev musl-dev libedit-dev libressl-dev \
             libsodium-dev libxml2-dev tidyhtml-dev sqlite-dev zlib-dev xmlrpc-c-dev libxslt-dev gettext-dev imap-dev openldap-dev icu-dev bzip2-dev libmcrypt-dev
@@ -102,16 +103,22 @@ RUN set -xe \
 		LDFLAGS="-Wl,-O1 -Wl,--hash-style=both -pie" \
 	&& cd /usr/src \
 	&& tar -xvJf php.tar.xz \
-	&& ln -s php-7.3.1 php \
-	&& cd /usr/src/php \
+	&& ln -s php-"${PHP_VERSION}" php \
+	&& cd /usr/src/php/ext \
+	# && pecl download igbinary imagick redis xdebug-2.7.0beta1 mcrypt-1.0.2 \
+	&& pecl download igbinary imagick \
+	&& for i in *tgz; do tar xvzf $i;  rm $i; done \
+	&& for i in *[0-9]\.[0-9]*; do mv $i $(echo $i | cut -f 1 -d \-); done \
+    && cd /usr/src/php \
+    && rm -f configure \
+    && ./buildconf --force \
+    && ./configure --help \
 	&& ./configure \
 		--with-config-file-path="$PHP_INI_DIR" \
 		--with-config-file-scan-dir="$PHP_INI_DIR/conf.d" \
 		--enable-option-checking=fatal \
 		--enable-fpm --with-fpm-user=www-data --with-fpm-group=www-data --disable-cgi \
-		--enable-static=curl \
-		--disable-shared \
-		--enable-shared=no \
+		--enable-static \
 		--enable-embed=static \
 		--enable-soap \
 		--enable-pcntl \
@@ -127,6 +134,11 @@ RUN set -xe \
         --enable-sysvshm \
         --enable-sockets \
         --enable-calendar \
+		--enable-shmop \
+		--enable-intl \
+		--enable-zip \
+		--enable-igbinary \
+		--with-imagick \
 		--with-mhash \
         --with-tidy \
         --with-gd \
@@ -143,10 +155,7 @@ RUN set -xe \
 		--with-xmlrpc \
 		--with-libedit \
 		--with-openssl \
-		--enable-shmop \
-		--enable-intl \
 		--with-zlib \
-		--enable-zip \
 		--with-xsl \
 		--with-libzip \
 		--with-pdo-mysql \
@@ -156,7 +165,6 @@ RUN set -xe \
 		--with-ldap \
 	&& make -j "$(nproc)" \
 	&& make install \
-	&& pecl install igbinary imagick redis xdebug-2.7.0beta1 mcrypt-1.0.2 \
 	&& { find /usr/local/bin /usr/local/sbin -type f -perm +0111 -exec strip --strip-all '{}' + || true; }
 
 # TODO: Move extra extensions to static
