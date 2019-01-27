@@ -8,59 +8,144 @@
 #
 # PERFORMAAAANCE!!!
 
-FROM builder as haproxy-builder
+FROM lean-hap_builder as haproxy-builder
 
 # TODO: Would be nice to have something here to resolve latest versions automatically.
 ENV HAPROXY_VERSION 1.9.2
-ENV LIBRESSL_VERSION 2.9.0
+
+# -- Pick only one below ----------------------------------------------------------------
+#ENV LIBRESSL_VERSION 2.4.5
+ENV OPENSSL_VERSION 1.1.1a
+# ---------------------------------------------------------------------------------------
+
+# -- Lua and it's dependencies ----------------------------------------------------------
 ENV LUA_VERSION 5.3.5
 ENV NCURSES_VERSION 6.1
+ENV READLINE_VERSION 6.3
+# ---------------------------------------------------------------------------------------
+
+# -- While you can compile both PCRE and PCRE2 simultaneously... Do you really need both?
 ENV PCRE_VERSION 8.42
 ENV PCRE2_VERSION 10.32
-ENV READLINE_VERSION 8.0
+# ---------------------------------------------------------------------------------------
+
+# -- Pick only one below ----------------------------------------------------------------
 ENV SLZ_VERSION master
-ENV ZLIB_VERSION 1.2.11
-# Just comment below if you want to skip some module.
-ENV HAPROXY_URL http://www.haproxy.org/download/${HAPROXY_VERSION::3}/src/haproxy-${HAPROXY_VERSION}.tar.gz
-ENV LIBRESSL_URL http://ftp.openbsd.org/pub/OpenBSD/LibreSSL/libressl-${LIBRESSL_VERSION}.tar.gz
-ENV LUA_URL http://www.lua.org/ftp/lua-${LUA_VERSION}.tar.gz
-ENV NCURSES_URL https://ftp.gnu.org/pub/gnu/ncurses/ncurses-${NCURSES_VERSION}.tar.gz
-ENV PCRE_URL https://ftp.pcre.org/pub/pcre/pcre-${PCRE_VERSION}.tar.gz
+#ENV ZLIB_VERSION 1.2.11
+# ---------------------------------------------------------------------------------------
+
+ENV HAPROXY_URL http://www.haproxy.org/download/1.9/src/haproxy-${HAPROXY_VERSION}.tar.gz
+#ENV LIBRESSL_URL http://ftp.openbsd.org/pub/OpenBSD/LibreSSL/libressl-${LIBRESSL_VERSION}.tar.gz
+ENV OPENSSL_URL https://www.openssl.org/source/openssl-${OPENSSL_VERSION}.tar.gz
+#ENV LUA_URL http://www.lua.org/ftp/lua-${LUA_VERSION}.tar.gz
+#ENV NCURSES_URL https://ftp.gnu.org/pub/gnu/ncurses/ncurses-${NCURSES_VERSION}.tar.gz
+#ENV PCRE_URL https://ftp.pcre.org/pub/pcre/pcre-${PCRE_VERSION}.tar.gz
 ENV PCRE2_URL https://ftp.pcre.org/pub/pcre/pcre2-${PCRE2_VERSION}.tar.gz
-ENV READLINE_URL https://ftp.gnu.org/gnu/readline/readline-${READLINE_VERSION}.tar.gz
+#ENV READLINE_URL https://ftp.gnu.org/gnu/readline/readline-${READLINE_VERSION}.tar.gz
 ENV SLZ_URL http://git.1wt.eu/web/libslz.git/
 #ENV ZLIB_URL http://zlib.net/zlib-${ZLIB_VERSION}.tar.gz
 
+
+# This will download all the files needed
 RUN set -xe; \
+    apk add --no-cache linux-headers; \
 	mkdir -p /usr/src; \
 	cd /usr/src; \
-    for i in ${HAPROXY_URL} ${LIBRESSL_URL} ${LUA_URL} ${NCURSES_URL} ${PCRE_URL} ${PCRE2_URL} ${READLINE_VERSION}; \
-    do; curl ${i} | tar xvz; \
+    for i in ${HAPROXY_URL} ${OPENSSL_URL} ${LIBRESSL_URL} ${LUA_URL} ${NCURSES_URL} ${READLINE_URL} ${PCRE_URL} ${PCRE2_URL}; \
+    do curl ${i} | tar xvz; \
     done; \
-    git clone http://git.1wt.eu/git/libslz.git/;
+    git clone http://git.1wt.eu/git/libslz.git/
 
+# ---- LUA Building below is broken :(
+#
+# Build Zlib
+#RUN set -xe; \
+#	export CFLAGS="${CUSTOM_CFLAGS}"; \
+#	export CXXFLAGS="${CUSTOM_CFLAGS}"; \
+#   cd /usr/src/zlib*; \
+#   ./configure --prefix=/usr/local/; \
+#   make -j $(nproc) && make install; \
+
+
+# Build Readline
+#RUN set -xe; \
+#	export CFLAGS="${CUSTOM_CFLAGS}"; \
+#	export CXXFLAGS="${CUSTOM_CFLAGS}"; \
+#    cd /usr/src/readline*; \
+#    ./configure --prefix=/usr/local/; \
+#    make -j $(nproc) && make install; \
+
+# Build Ncurses
+#RUN set -xe; \
+#	export CFLAGS="${CUSTOM_CFLAGS}"; \
+#	export CXXFLAGS="${CUSTOM_CFLAGS}"; \
+#    cd /usr/src/ncurses*; \
+#    ./configure --prefix=/usr/local/; \
+#    make -j $(nproc) && make install; \
+
+# Build Lua
+#RUN set -xe; \
+#    cd /usr/src/lua*; \
+#    make -j $(nproc) MYCFLAGS="${CUSTOM_CFLAGS} -I/usr/static/readline/include" \
+#    MYLDFLAGS="-L/usr/static/readline/lib -L/usr/static/ncurses/lib -lreadline -lncurses" linux && make install
+
+# Build LibreSSL - Potencially broken
+#RUN set -xe; \
+#	export CFLAGS="${CUSTOM_CFLAGS}"; \
+#	export CXXFLAGS="${CUSTOM_CFLAGS}"; \
+#    cd /usr/src/libressl*; \
+#    ./configure; \
+#    make -j $(nproc) && make install
+
+# Build OpenSSL
 RUN set -xe; \
 	export CFLAGS="${CUSTOM_CFLAGS}"; \
 	export CXXFLAGS="${CUSTOM_CFLAGS}"; \
-    cd /usr/src/ncurses*; \
-    ./configure --enable-shared=no; \
-    make -j $(nproc) && make install; \
-    cd /usr/src/zlib*; \
-    ./configure --static; \
-    make -j $(nproc) && make install; \
-    cd /usr/src/readline*; \
-    ./configure --enable-static=true; \
-    make -j $(nproc) && make install; \
-    cd /usr/src/lua*; \
-    make -j $(nproc) && make install; \
-    cd /usr/src/libressl*; \
-    ./configure --enable-shared=no; \
-    make -j $(nproc) && make install; \
-    cd /usr/src/pcre-*; \
-    ./configure --enable-shared=no --enable-utf8 --enable-jit; \
-    make && make install; \
+    cd /usr/src/openssl*; \
+    ./config; \
+    make -j $(nproc) && make install
+
+# Build PCRE
+#RUN set -xe; \
+#	export CFLAGS="${CUSTOM_CFLAGS}"; \
+#	export CXXFLAGS="${CUSTOM_CFLAGS}"; \
+#    cd /usr/src/pcre-*; \
+#    ./configure --enable-utf8 --enable-jit; \
+#    make && make install
+
+# Build PCRE2
+RUN set -xe; \
+	export CFLAGS="${CUSTOM_CFLAGS}"; \
+	export CXXFLAGS="${CUSTOM_CFLAGS}"; \
+    cd /usr/src/pcre2-*; \
+    ./configure --enable-utf8 --enable-jit; \
+    make && make install
+
+# Build libslz
+RUN set -xe; \
+	export CFLAGS="${CUSTOM_CFLAGS}"; \
+	export CXXFLAGS="${CUSTOM_CFLAGS}"; \
     cd /usr/src/libslz*; \
-    make && make install; \
+    make && make install
+
+# Build HAProxy
+RUN set -xe; \
+	export CFLAGS="${CUSTOM_CFLAGS}"; \
+	export CXXFLAGS="${CUSTOM_CFLAGS}"; \
     cd /usr/src/haproxy*; \
-    make TARGET=linux2628 USE_PCRE_JIT=1 USE_LUA=1 USE_ZLIB=1 USE_STATIC_PCRE=1 USE_OPENSSL=1 ADDLIB="-ldl -lrt -lz"; \
-    make install
+    make TARGET=linux2628 CFLAGS="${CFLAGS}" USE_PCRE2_JIT=1 USE_SLZ=1 USE_OPENSSL=1 USE_THREAD=1 USE_PTHREAD_PSHARED=1 \
+    USE_REGPARM=1 USE_TFO=1 USE_NS=1; \
+    make install; \
+    find /usr/local/sbin /usr/local/lib -type f -perm +0111 -exec strip --strip-all '{}' + || true
+
+FROM alpine
+
+COPY --from=haproxy-builder /usr/local/lib /lib
+COPY --from=haproxy-builder /usr/local/sbin /sbin
+
+VOLUME ["/etc/haproxy"]
+ENTRYPOINT ["/sbin/haproxy", "-f", "/etc/haproxy.cfg"]
+
+EXPOSE[80, 443]
+
+CMD ["haproxy"]

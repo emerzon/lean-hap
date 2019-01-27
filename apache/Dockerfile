@@ -6,7 +6,7 @@
 # used only on our backend, and frontend SSL is handled by HAProxy.
 # PERFORMAAAANCE!!!
 
-FROM builder as apache-builder
+FROM lean-hap_builder as apache-builder
 
 ENV HTTPD_VERSION 2.4.38
 ENV MODFCGID_VERSION 2.3.9

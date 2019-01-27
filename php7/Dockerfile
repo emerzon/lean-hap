@@ -1,4 +1,4 @@
-FROM builder as php-builder
+FROM lean-hap_builder as php-builder
 
 # Customizable values:
 ENV PHP_VERSION 7.3.1

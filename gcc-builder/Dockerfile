@@ -1,7 +1,7 @@
 # This is only useful if you wish to compile your own GCC.
 # No longer required since GCC was added to Alpine Edge Repo
 
-FROM alpine as gccbuilder
+FROM alpine as gcc-builder
 
 ENV GCC_VERSION 8.2.0
 
