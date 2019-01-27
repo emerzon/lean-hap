@@ -1,0 +1,11 @@
+version: '3'
+
+services:
+  builder:
+    build: './builder'
+  apache:
+    build: './apache'
+  php7:
+    build: './php7'
+  haproxy:
+    build: './haproxy'
