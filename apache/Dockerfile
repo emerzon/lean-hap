@@ -22,7 +22,6 @@ ENV APR_URL http://www-eu.apache.org/dist/apr/apr-${APR_VERSION}.tar.bz2
 ENV APRUTIL_URL http://www-eu.apache.org/dist/apr/apr-util-${APRUTIL_VERSION}.tar.bz2
 ENV PCRE_URL https://ftp.pcre.org/pub/pcre/pcre-${PCRE_VERSION}.tar.bz2
 
-
 RUN apk add --no-cache python
 
 RUN set -xe; \
@@ -44,22 +43,30 @@ RUN set -xe; \
 	export CFLAGS="${CUSTOM_CFLAGS}"; \
 	export CXXFLAGS="${CUSTOM_CFLAGS}"; \
 	cd /usr/src/pcre; \
-	./configure; \
+	./configure --prefix=/usr/local/; \
 	make -j $(nproc); \
 	make install; \
-	cd /usr/src/expat; \
-	./configure; \
+	cd /usr/src/expat ; \
+	./configure --prefix=/usr/local/; \
 	make -j $(nproc); \
 	make install; \
 	cd /usr/src/httpd/; \
 	./buildconf; \
-	./configure --enable-fcgid; \
+	./configure --prefix=/usr/local/ --enable-fcgid; \
 	make -j $(nproc); \
 	make install
 
-FROM alpine
-COPY --from=apache-builder /usr/local/ /usr/local/
+RUN set -xe; \
+    find /usr/local -type f -perm +0111 -exec strip --strip-all '{}' + || true
 
-CMD ["httpd"]
+FROM alpine:edge
+
+RUN set -x \
+	&& addgroup -g 48 -S www-data \
+	&& adduser -u 990 -D -S -G www-data www-data
+
+COPY --from=apache-builder /usr/local /usr/local
+
+CMD ["/usr/local/bin/httpd"]
 
 

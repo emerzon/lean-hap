@@ -5,7 +5,19 @@ services:
     build: './builder'
   apache:
     build: './apache'
+    ports:
+       - 8080:8080
   php7:
     build: './php7'
+    volumes:
+      - ./config/php-fpm.d/:/etc/php-fpm.d
+      - ./config/php.d/:/etc/php.d
+    ports:
+      - 9000:9000
   haproxy:
     build: './haproxy'
+    volumes:
+      - ./config/haproxy:/etc/haproxy:ro
+    ports:
+      - 80:80
+      - 443:443

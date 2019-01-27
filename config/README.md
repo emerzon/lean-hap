@@ -1,0 +1,1 @@
+This directory contains simple configuration skeletons for the components that can be used as reference.

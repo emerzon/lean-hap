@@ -138,14 +138,9 @@ RUN set -xe; \
     make install; \
     find /usr/local/sbin /usr/local/lib -type f -perm +0111 -exec strip --strip-all '{}' + || true
 
-FROM alpine
+FROM alpine:edge
 
 COPY --from=haproxy-builder /usr/local/lib /lib
 COPY --from=haproxy-builder /usr/local/sbin /sbin
 
-VOLUME ["/etc/haproxy"]
-ENTRYPOINT ["/sbin/haproxy", "-f", "/etc/haproxy.cfg"]
-
-EXPOSE[80, 443]
-
-CMD ["haproxy"]
+CMD ["/sbin/haproxy", "-f", "/etc/haproxy/haproxy.cfg"]

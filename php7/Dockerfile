@@ -2,7 +2,7 @@ FROM lean-hap_builder as php-builder
 
 # Customizable values:
 ENV PHP_VERSION 7.3.1
-ENV PHP_INI_DIR /usr/local/etc/php
+ENV PHP_INI_DIR /etc/php
 ENV PHP_URL "https://secure.php.net/get/php-${PHP_VERSION}.tar.xz/from/this/mirror"
 
 ENV DEP_PACKAGES="\
@@ -14,7 +14,6 @@ bzip2-dev libmcrypt-dev"
 ENV PECL_EMBEDDED_PACKAGES="igbinary imagick mcrypt"
 ENV PECL_MODULAR_PACKAGES="redis xdebug-2.7.0beta1"
 
-RUN sed -i -e 's/v[[:digit:]]\.[[:digit:]]/edge/g' /etc/apk/repositories
 RUN xargs apk add --no-cache ${DEP_PACKAGES}
 
 RUN set -xe; \
@@ -88,7 +87,7 @@ RUN set -xe \
 
 RUN pecl install ${PECL_MODULAR_PACKAGES}
 
-FROM alpine
+FROM alpine:edge
 
 COPY --from=php-builder /usr/local/ /usr/local/
 
@@ -98,11 +97,11 @@ RUN runDeps="$( \
 			| sort -u \
 			| awk 'system("[ -e /usr/lib/" $1 " ]") == 0 { next } { print "so:" $1 }' \
 	)" \
-	&& sed -i -e 's/v[[:digit:]]\.[[:digit:]]/edge/g' /etc/apk/repositories \
 	&& apk add $runDeps
 
 RUN set -x \
 	&& addgroup -g 48 -S www-data \
-	&& adduser -u 990 -D -S -G www-data www-data
+	&& adduser -u 990 -D -S -G www-data www-data \
+	&& echo "include=/etc/php-fpm.d/*.conf" > /usr/local/etc/php-fpm.conf
 
-CMD ["php-fpm"]
+CMD ["php-fpm", "-F", "-c", "/etc/php.d/"]
