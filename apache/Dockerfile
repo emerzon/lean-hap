@@ -1,5 +1,10 @@
 # ----------------------------------------------------------------------------------------------------------------------
-# - Apache Build container Build Start -
+# - Apache Image Build
+#
+# This is a **VERY** spartan version of Apache, with all dependencies being compiled/linked here.
+# Also you will notice that SSL Support is not enabled. Reason for that is that we don't really needed, since it will
+# used only on our backend, and frontend SSL is handled by HAProxy.
+# PERFORMAAAANCE!!!
 
 FROM builder as apache-builder
 
