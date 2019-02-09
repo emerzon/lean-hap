@@ -140,7 +140,9 @@ RUN set -xe; \
 
 FROM alpine:edge
 
+ADD ./entrypoint.sh /usr/bin/entrypoint
+
 COPY --from=haproxy-builder /usr/local/lib /lib
 COPY --from=haproxy-builder /usr/local/sbin /sbin
 
-CMD ["/sbin/haproxy", "-f", "/etc/haproxy/haproxy.cfg"]
+ENTRYPOINT [ "entrypoint" ]
