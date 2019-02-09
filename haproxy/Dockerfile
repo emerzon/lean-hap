@@ -11,7 +11,7 @@
 FROM lean-hap_builder as haproxy-builder
 
 # TODO: Would be nice to have something here to resolve latest versions automatically.
-ENV HAPROXY_VERSION 1.9.2
+ENV HAPROXY_VERSION 1.9.4
 
 # -- Pick only one below ----------------------------------------------------------------
 #ENV LIBRESSL_VERSION 2.4.5
