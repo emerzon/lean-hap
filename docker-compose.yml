@@ -31,6 +31,8 @@ services:
       - shared-sockets:/var/socks/
     depends_on:
       - builder
+      - apache
+      - php7
 volumes:
   shared-sockets:
 
