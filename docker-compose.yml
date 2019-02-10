@@ -7,17 +7,28 @@ services:
     build: './apache'
     ports:
        - 8080:8080
+    volumes:
+      - ./config/apache/httpd.conf:/usr/local/apache2/conf/httpd.conf
+      - ./srv:/usr/local/apache2/htdocs/
+      - shared-sockets:/var/socks/
   php7:
     build: './php7'
     volumes:
       - ./config/php-fpm.d/:/etc/php-fpm.d
-      - ./config/php.d/:/etc/php.d
+      - ./config/php/:/etc/php/
+      - ./srv:/usr/local/apache2/htdocs/
+      - shared-sockets:/var/socks/
     ports:
       - 9000:9000
   haproxy:
     build: './haproxy'
     volumes:
       - ./config/haproxy:/etc/haproxy:ro
+      - ./var/run/haproxy:/var/run/haproxy
+      - shared-sockets:/var/socks/
     ports:
       - 80:80
       - 443:443
+
+volumes:
+  shared-sockets:

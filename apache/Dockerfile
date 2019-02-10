@@ -52,7 +52,8 @@ RUN set -xe; \
 	make install; \
 	cd /usr/src/httpd/; \
 	./buildconf; \
-	./configure --prefix=/usr/local/ --enable-fcgid; \
+	./configure --prefix=/usr/local/apache2 --enable-fcgid --enable-static-fcgistarter --enable-proxy-fcgi \
+--enable-proxy --enable-mpms-shared="all" --enable-mods-static="most"; \
 	make -j $(nproc); \
 	make install
 
@@ -67,6 +68,6 @@ RUN set -x \
 
 COPY --from=apache-builder /usr/local /usr/local
 
-CMD ["/usr/local/bin/httpd"]
+CMD ["/usr/local/apache2/bin/httpd", "-DFOREGROUND"]
 
 

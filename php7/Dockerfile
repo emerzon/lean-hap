@@ -1,7 +1,7 @@
 FROM lean-hap_builder as php-builder
 
 # Customizable values:
-ENV PHP_VERSION 7.3.1
+ENV PHP_VERSION 7.3.2
 ENV PHP_INI_DIR /etc/php
 ENV PHP_URL "https://secure.php.net/get/php-${PHP_VERSION}.tar.xz/from/this/mirror"
 
@@ -11,8 +11,8 @@ curl-dev dpkg-dev imagemagick-dev gd-dev libzip-dev libc-dev musl-dev libedit-de
 libxml2-dev tidyhtml-dev sqlite-dev zlib-dev xmlrpc-c-dev libxslt-dev gettext-dev imap-dev openldap-dev icu-dev \
 bzip2-dev libmcrypt-dev"
 
-ENV PECL_EMBEDDED_PACKAGES="igbinary imagick mcrypt"
-ENV PECL_MODULAR_PACKAGES="redis xdebug-2.7.0beta1"
+ENV PECL_EMBEDDED_PACKAGES="igbinary-2.0.8 imagick mcrypt"
+ENV PECL_MODULAR_PACKAGES="redis xdebug-2.7.0RC1"
 
 RUN xargs apk add --no-cache ${DEP_PACKAGES}
 
@@ -23,7 +23,7 @@ RUN set -xe; \
 	tar -xvJf php.tar.xz; \
 	ln -s php-"${PHP_VERSION}" php; \
 	cd /usr/src/php/ext; \
-	for i in ${PECL_EMBEDDED_PACKAGES}; do curl https://pecl.php.net/get/${i} | tar xvz; mv ${i}* ${i##*-}; done
+	for i in ${PECL_EMBEDDED_PACKAGES}; do curl https://pecl.php.net/get/${i} | tar xvz; mv ${i}* ${i%%-*}; done
 
 RUN set -xe \
 	&& export CFLAGS="${CUSTOM_CFLAGS}" \
@@ -104,4 +104,4 @@ RUN set -x \
 	&& adduser -u 990 -D -S -G www-data www-data \
 	&& echo "include=/etc/php-fpm.d/*.conf" > /usr/local/etc/php-fpm.conf
 
-CMD ["php-fpm", "-F", "-c", "/etc/php.d/"]
+CMD ["php-fpm", "-F", "-c", "/etc/php/php.ini"]
