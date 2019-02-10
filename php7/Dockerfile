@@ -62,9 +62,8 @@ RUN set -xe \
         --with-freetype-dir \
         --with-gd \
 		--with-gettext \
-		--with-imagick \
+		--with-imagick=static \
 		--with-imap-ssl \
-        --with-jpeg-dir \
 		--with-ldap \
 		--with-libedit \
 		--with-libzip \
@@ -72,22 +71,18 @@ RUN set -xe \
 		--with-openssl \
 		--with-password-argon2 \
 		--with-pdo-mysql \
-        --with-png-dir \
 		--with-sodium=shared \
         --with-tidy \
-        --with-webp-dir \
 		--with-xmlrpc \
-        --with-xpm-dir \
 		--with-xsl \
 		--with-zlib \
-        --with-zlib-dir \
 	&& make -j "$(nproc)" \
 	&& make install \
 	&& { find /usr/local/bin /usr/local/sbin -type f -perm +0111 -exec strip --strip-all '{}' + || true; }
 
 RUN pecl install ${PECL_MODULAR_PACKAGES}
 
-FROM alpine:edge
+FROM alpine
 
 COPY --from=php-builder /usr/local/ /usr/local/
 
@@ -97,7 +92,7 @@ RUN runDeps="$( \
 			| sort -u \
 			| awk 'system("[ -e /usr/lib/" $1 " ]") == 0 { next } { print "so:" $1 }' \
 	)" \
-	&& apk add $runDeps
+	&& apk add $runDeps libwebp libjpeg-turbo libxpm libexif imagemagick gd
 
 RUN set -x \
 	&& addgroup -g 48 -S www-data \

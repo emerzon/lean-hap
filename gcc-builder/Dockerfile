@@ -1,6 +1,6 @@
 # This is only useful if you wish to compile your own GCC from git for GCC9
 
-FROM alpine:edge as gcc-builder
+FROM alpine as gcc-builder
 
 RUN apk add --quiet --no-cache \
             build-base \

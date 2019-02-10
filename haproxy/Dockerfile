@@ -138,7 +138,7 @@ RUN set -xe; \
     make install; \
     find /usr/local/sbin /usr/local/lib -type f -perm +0111 -exec strip --strip-all '{}' + || true
 
-FROM alpine:edge
+FROM alpine
 
 ADD ./entrypoint.sh /usr/bin/entrypoint
 

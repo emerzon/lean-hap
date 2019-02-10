@@ -60,7 +60,7 @@ RUN set -xe; \
 RUN set -xe; \
     find /usr/local -type f -perm +0111 -exec strip --strip-all '{}' + || true
 
-FROM alpine:edge
+FROM alpine
 
 RUN set -x \
 	&& addgroup -g 48 -S www-data \

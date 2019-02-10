@@ -9,6 +9,8 @@ services:
       - ./config/apache/httpd.conf:/usr/local/apache2/conf/httpd.conf
       - ./srv:/usr/local/apache2/htdocs/
       - shared-sockets:/var/socks/
+    depends_on:
+      - builder
   php7:
     build: './php7'
     volumes:
@@ -16,6 +18,8 @@ services:
       - ./config/php/:/etc/php/
       - ./srv:/usr/local/apache2/htdocs/
       - shared-sockets:/var/socks/
+    depends_on:
+      - builder
   haproxy:
     build: './haproxy'
     ports:
@@ -25,7 +29,8 @@ services:
       - ./config/haproxy:/etc/haproxy:ro
       - ./var/run/haproxy:/var/run/haproxy
       - shared-sockets:/var/socks/
-
+    depends_on:
+      - builder
 volumes:
   shared-sockets:
 
