@@ -5,8 +5,6 @@ services:
     build: './builder'
   apache:
     build: './apache'
-    ports:
-       - 8080:8080
     volumes:
       - ./config/apache/httpd.conf:/usr/local/apache2/conf/httpd.conf
       - ./srv:/usr/local/apache2/htdocs/
@@ -18,17 +16,16 @@ services:
       - ./config/php/:/etc/php/
       - ./srv:/usr/local/apache2/htdocs/
       - shared-sockets:/var/socks/
-    ports:
-      - 9000:9000
   haproxy:
     build: './haproxy'
+    ports:
+      - 80:80
+      - 443:443
     volumes:
       - ./config/haproxy:/etc/haproxy:ro
       - ./var/run/haproxy:/var/run/haproxy
       - shared-sockets:/var/socks/
-    ports:
-      - 80:80
-      - 443:443
 
 volumes:
   shared-sockets:
+
