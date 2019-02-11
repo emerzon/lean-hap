@@ -41,7 +41,6 @@ RUN set -xe \
 		--enable-embed=static \
 		--enable-bcmath \
         --enable-calendar \
-		--enable-embedded-mysqli \
 		--enable-exif \
 		--enable-ftp \
 		--enable-igbinary \
@@ -69,6 +68,7 @@ RUN set -xe \
 		--with-libedit \
 		--with-libzip \
 		--with-mhash \
+		--with-mysqli \
 		--with-openssl \
 		--with-password-argon2 \
 		--with-pdo-mysql \
