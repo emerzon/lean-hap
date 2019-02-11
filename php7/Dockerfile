@@ -9,7 +9,7 @@ ENV DEP_PACKAGES="\
 argon2-dev libpng-dev freetype-dev libwebp-dev libjpeg-turbo-dev libxpm-dev libexif-dev \
 curl-dev dpkg-dev imagemagick-dev gd-dev libzip-dev libc-dev musl-dev libedit-dev libsodium-dev \
 libxml2-dev tidyhtml-dev sqlite-dev zlib-dev xmlrpc-c-dev libxslt-dev gettext-dev imap-dev openldap-dev icu-dev \
-bzip2-dev libmcrypt-dev"
+bzip2-dev libmcrypt-dev mariadb-dev"
 
 ENV PECL_EMBEDDED_PACKAGES="igbinary-2.0.8 imagick mcrypt"
 ENV PECL_MODULAR_PACKAGES="redis xdebug-2.7.0RC1"
@@ -64,6 +64,7 @@ RUN set -xe \
 		--with-gettext \
 		--with-imagick=static \
 		--with-imap-ssl \
+		--with-jpeg-dir=/usr/include/ \
 		--with-ldap \
 		--with-libedit \
 		--with-libzip \
@@ -71,11 +72,15 @@ RUN set -xe \
 		--with-openssl \
 		--with-password-argon2 \
 		--with-pdo-mysql \
+        --with-png-dir \
 		--with-sodium=shared \
         --with-tidy \
+        --with-webp-dir \
 		--with-xmlrpc \
+        --with-xpm-dir \
 		--with-xsl \
 		--with-zlib \
+        --with-zlib-dir \
 	&& make -j "$(nproc)" \
 	&& make install \
 	&& { find /usr/local/bin /usr/local/sbin -type f -perm +0111 -exec strip --strip-all '{}' + || true; }
@@ -92,7 +97,7 @@ RUN runDeps="$( \
 			| sort -u \
 			| awk 'system("[ -e /usr/lib/" $1 " ]") == 0 { next } { print "so:" $1 }' \
 	)" \
-	&& apk add $runDeps libwebp libjpeg-turbo libxpm libexif imagemagick gd curl
+	&& apk add $runDeps libwebp libjpeg libxpm libexif imagemagick gd curl mariadb-client
 
 RUN curl -L https://bitbucket.org/ariya/phantomjs/downloads/phantomjs-2.1.1-linux-x86_64.tar.bz2 \
 | tar xvj phantomjs-2.1.1-linux-x86_64/bin/phantomjs \
