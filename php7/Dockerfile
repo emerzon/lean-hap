@@ -108,7 +108,7 @@ RUN set -x \
 	&& addgroup -g 48 -S www-data \
 	&& adduser -u 990 -D -S -G www-data www-data \
 	&& echo "include=/etc/php-fpm.d/*.conf" > /usr/local/etc/php-fpm.conf \
-	&& mkdir -p /var/php/{sessions,cache} \
+	&& mkdir -p /var/php/sessions \
 	&& chown -R www-data:www-data /var/php
 
 CMD ["php-fpm", "-F", "-c", "/etc/php/php.ini"]
