@@ -15,7 +15,7 @@ libxml2-dev tidyhtml-dev sqlite-dev zlib-dev xmlrpc-c-dev libxslt-dev gettext-de
 bzip2-dev libmcrypt-dev mariadb-dev"
 
 ENV PECL_EMBEDDED_PACKAGES="apcu-4.0.11 imagick"
-ENV PECL_MODULAR_PACKAGES="redis xdebug-2.5.5"
+ENV PECL_MODULAR_PACKAGES="redis xdebug-2.5.5 igbinary-2.0.8"
 
 RUN xargs apk add --no-cache ${DEP_PACKAGES}
 
