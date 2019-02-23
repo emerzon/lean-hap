@@ -103,7 +103,7 @@ RUN set -xe; \
 	export CXXFLAGS="${CUSTOM_CFLAGS}"; \
     cd /usr/src/openssl*; \
     ./config; \
-    make -j $(nproc) && make install
+    make -j $(nproc) && make install_sw
 
 # Build PCRE
 #RUN set -xe; \

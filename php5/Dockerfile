@@ -10,12 +10,12 @@ ENV OPENSSL_URL https://www.openssl.org/source/openssl-${OPENSSL_VERSION}.tar.gz
 
 ENV DEP_PACKAGES="\
 linux-headers libpng-dev freetype-dev libwebp-dev libjpeg-turbo-dev libxpm-dev libexif-dev \
-curl-dev dpkg-dev imagemagick-dev gd-dev libzip-dev libc-dev musl-dev libedit-dev libsodium-dev \
+curl-dev dpkg-dev imagemagick-dev gd-dev libzip-dev libc-dev musl-dev libedit-dev \
 libxml2-dev tidyhtml-dev sqlite-dev zlib-dev xmlrpc-c-dev libxslt-dev gettext-dev imap-dev openldap-dev icu-dev \
 bzip2-dev libmcrypt-dev mariadb-dev"
 
-ENV PECL_EMBEDDED_PACKAGES="imagick"
-ENV PECL_MODULAR_PACKAGES="redis xdebug"
+ENV PECL_EMBEDDED_PACKAGES="apcu-4.0.11 imagick"
+ENV PECL_MODULAR_PACKAGES="redis xdebug-2.5.5"
 
 RUN xargs apk add --no-cache ${DEP_PACKAGES}
 
@@ -30,7 +30,7 @@ RUN set -xe; \
 	export CXXFLAGS="${CUSTOM_CFLAGS}"; \
     cd /usr/src/openssl*; \
     ./config; \
-    make -j $(nproc) && make install
+    make -j $(nproc) && make install_sw
 
 RUN set -xe; \
 	cd /usr/src; \
@@ -38,7 +38,7 @@ RUN set -xe; \
 	tar -xvJf php.tar.xz; \
 	ln -s php-"${PHP_VERSION}" php; \
 	cd /usr/src/php/ext; \
-	for i in ${PECL_EMBEDDED_PACKAGES}; do curl https://pecl.php.net/get/${i} | tar xvz; mv ${i}* ${i%%-*}; done
+	for i in ${PECL_EMBEDDED_PACKAGES}; do curl https://pecl.php.net/get/${i} | tar xvz; mv $(ls | grep -i ${i}) ${i%%-*}; done
 
 RUN set -xe \
 	&& export CFLAGS="${CUSTOM_CFLAGS}" \
@@ -56,6 +56,7 @@ RUN set -xe \
 		--enable-option-checking=fatal \
 		--enable-fpm --with-fpm-user=www-data --with-fpm-group=www-data --disable-cgi \
 		--enable-embed=static \
+		--enable-apcu \
 		--enable-bcmath \
         --enable-calendar \
 		--enable-exif \
@@ -78,6 +79,7 @@ RUN set -xe \
 		--with-gettext \
 		--with-imagick=static \
 		--with-imap \
+		--with-imap-ssl \
 		--with-jpeg-dir=/usr/include/ \
 		--with-ldap \
 		--with-libedit \
