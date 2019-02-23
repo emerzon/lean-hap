@@ -11,8 +11,8 @@ services:
       - shared-sockets:/var/socks/
     depends_on:
       - builder
-  php7:
-    build: './php7'
+  php5:
+    build: './php5'
     volumes:
       - ./config/php-fpm.d/:/etc/php-fpm.d
       - ./config/php/:/etc/php/
@@ -32,7 +32,7 @@ services:
     depends_on:
       - builder
       - apache
-      - php7
+      - php5
 volumes:
   shared-sockets:
 
