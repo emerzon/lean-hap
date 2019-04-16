@@ -10,11 +10,12 @@ Packages provided by distros aim to be compatible with the most hardware possibl
 By compiling locally all the dependencies we can ensure that all the resources of your specific CPU will be used. 
 
 # How are these claimed speed-ups implemented?
-1) By always using the latest version of GCC, we ensure that the most recent cpu flags are actually used.
-Here's some data: https://www.phoronix.com/scan.php?page=article&item=gcc-81-1280v5&num=1
-2) Enable GCC further optimizations flags (-O3 or -Ofast) - Regular distros are too afraid to do it. Let's break some eggs!
+1) By always using the latest version of GCC, we take benefit of a vast number of code optimizations, and also we can enable most recent cpu capabilities (like AVX-512). These can bring huge benefits to performance.
+We've seen over 70% speedups on SSL. Here's some detailed data: https://www.phoronix.com/scan.php?page=article&item=gcc-81-1280v5&num=1
+2) Enable GCC further optimizations flags not often used by regular distros.
 3) We aim, when possible, to statically compile everything \*we need\*, avoiding useless syscalls to load modules. 
 4) Based off Alpine Linux, container size aims to be as small as possible.
+5) Depedency libraries choices can also have some impact on performance. For instance, in HAProxy we use libslz instead of standard zlib to increase compression performance.
 
 # Can I run this in Prod?
 Only if you're brave enough. This is still under initial development.
