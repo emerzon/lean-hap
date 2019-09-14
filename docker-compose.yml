@@ -11,8 +11,8 @@ services:
       - shared-sockets:/var/socks/
     depends_on:
       - builder
-  php5:
-    build: './php5'
+  php7:
+    build: './php7'
     volumes:
       - ./config/php-fpm.d/:/etc/php-fpm.d
       - ./config/php/:/etc/php/
@@ -21,7 +21,11 @@ services:
     depends_on:
       - builder
   modsec:
-    build: './modsecurity-spoe'
+    build: './modsec'
+    ports:
+      - 6666:6666
+    depends_on:
+      - builder
   haproxy:
     build: './haproxy'
     ports:
@@ -34,6 +38,7 @@ services:
     depends_on:
       - builder
       - apache
-      - php5
+      - php7
+      - modsec
 volumes:
   shared-sockets:

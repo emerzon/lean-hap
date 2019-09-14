@@ -1,7 +1,7 @@
 FROM lean-hap_builder as php-builder
 
 # Customizable values:
-ENV PHP_VERSION 7.3.2
+ENV PHP_VERSION 7.3.9
 ENV PHP_INI_DIR /etc/php
 ENV PHP_URL "https://secure.php.net/get/php-${PHP_VERSION}.tar.xz/from/this/mirror"
 
@@ -11,8 +11,8 @@ curl-dev dpkg-dev imagemagick-dev gd-dev libzip-dev libc-dev musl-dev libedit-de
 libxml2-dev tidyhtml-dev sqlite-dev zlib-dev xmlrpc-c-dev libxslt-dev gettext-dev imap-dev openldap-dev icu-dev \
 bzip2-dev libmcrypt-dev mariadb-dev"
 
-ENV PECL_EMBEDDED_PACKAGES="igbinary-2.0.8 imagick mcrypt"
-ENV PECL_MODULAR_PACKAGES="redis xdebug-2.7.0RC1"
+ENV PECL_EMBEDDED_PACKAGES="igbinary imagick mcrypt"
+ENV PECL_MODULAR_PACKAGES="redis xdebug"
 
 RUN xargs apk add --no-cache ${DEP_PACKAGES}
 

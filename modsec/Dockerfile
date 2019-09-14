@@ -69,7 +69,7 @@ RUN wget -qO/etc/modsecurity/modsecurity.conf https://github.com/SpiderLabs/ModS
         | while read -r f; do cp -p "$f" "${f%.example}"; done \
     && sed -i.example \
         's/^SecRuleEngine .*/SecRuleEngine On/' \
-        /etc/modsecurity/modsecurity.conf \
+        /etc/modsecurity/*.conf \
     && sed -i.example \
         's/^\(SecDefaultAction "phase:[12]\),log,auditlog,pass"/\1,log,noauditlog,deny,status:403"/' \
         /etc/modsecurity/owasp-modsecurity-crs/crs-setup.conf \
@@ -82,5 +82,6 @@ RUN wget -qO/etc/modsecurity/modsecurity.conf https://github.com/SpiderLabs/ModS
             -type f -maxdepth 1 -name '*.conf' \
         | sort | sed 's/^/Include /' >> /etc/modsecurity/owasp-modsecurity-crs.conf
 
+RUN echo 'Include *.conf' > /etc/modsecurity/loader.cfg
 
-ENTRYPOINT [ "/sbin/modsecurity", "-p", "6666", "-f", "/etc/modsecurity/modsecurity.conf" ]
+ENTRYPOINT [ "/sbin/modsecurity", "-p", "6666", "-f", "/etc/modsecurity/loader.cfg"]
