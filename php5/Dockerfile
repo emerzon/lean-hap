@@ -101,7 +101,7 @@ RUN set -xe \
 
 RUN pecl install ${PECL_MODULAR_PACKAGES}
 
-FROM alpine
+FROM alpine:edge
 
 COPY --from=php-builder /usr/local/ /usr/local/
 

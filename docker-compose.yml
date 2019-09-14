@@ -20,6 +20,8 @@ services:
       - shared-sockets:/var/socks/
     depends_on:
       - builder
+  modsec:
+    build: './modsecurity-spoe'
   haproxy:
     build: './haproxy'
     ports:
@@ -35,4 +37,3 @@ services:
       - php5
 volumes:
   shared-sockets:
-

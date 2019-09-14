@@ -1,12 +1,13 @@
 # lean-hap
-Lean-HAP intends to provide a (super!) optimized version of The HAP stack - HAProxy, Apache and PHP7.
+Lean-HAP intends to provide a (super!) optimized version of The HAP stack - HAProxy, Apache and PHP5/7.
+A few extra components such as ModSecurity are currently being integrated into the bundle.
 
 All (well, currently most) of the required packages are compiled locally with the most recent GCC version
 using compiler optimization flags not commonly present in regular OS packages - also allowing module customization, and unbeatable performance.
 
 # Why not just use the regular OS packages?
 Short answer: Speed!
-Packages provided by distros aim to be compatible with the most hardware possible. However, this implies a tradeoff with speed.
+Packages provided by most OS distributions aim to be compatible with the most hardware possible. However, this implies a tradeoff with speed.
 By compiling locally all the dependencies we can ensure that all the resources of your specific CPU will be used. 
 
 # How are these claimed speed-ups implemented?
@@ -15,7 +16,8 @@ We've seen over 70% speedups on SSL. Here's some detailed data: https://www.phor
 2) Enable GCC further optimizations flags not often used by regular distros.
 3) We aim, when possible, to statically compile everything \*we need\*, avoiding useless syscalls to load modules. 
 4) Based off Alpine Linux, container size aims to be as small as possible.
-5) Depedency libraries choices can also have some impact on performance. For instance, in HAProxy we use libslz instead of standard zlib to increase compression performance.
+5) Dependency libraries choices can also have some impact on performance. For instance, in HAProxy we use libslz instead of standard zlib to increase compression performance.
+6) Letting you decide the trade-off between speed and security. (Soon-ish)
 
 # Can I run this in Prod?
 Only if you're brave enough. This is still under initial development.

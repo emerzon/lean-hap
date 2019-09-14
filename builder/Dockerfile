@@ -1,4 +1,4 @@
-FROM alpine as builder
+FROM alpine:edge as builder
 
 ENV BUILD_PACKAGES="\
 autoconf automake binutils ca-certificates cmake coreutils curl dpkg file git gcc g++ gmp gnupg isl openssl libtool musl-dev \

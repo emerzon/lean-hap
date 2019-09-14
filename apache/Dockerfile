@@ -8,11 +8,11 @@
 
 FROM lean-hap_builder as apache-builder
 
-ENV HTTPD_VERSION 2.4.38
+ENV HTTPD_VERSION 2.4.41
 ENV MODFCGID_VERSION 2.3.9
-ENV APR_VERSION 1.6.5
-ENV APRUTIL_VERSION 1.6.1
-ENV PCRE_VERSION 8.42
+ENV APR_VERSION 1.7.0
+ENV APRUTIL_VERSION 1.7.0
+ENV PCRE_VERSION 8.43
 
 ENV LIBEXPAT_URL https://github.com/libexpat/libexpat/releases/download/R_2_2_6/expat-2.2.6.tar.bz2
 
@@ -60,7 +60,7 @@ RUN set -xe; \
 RUN set -xe; \
     find /usr/local -type f -perm +0111 -exec strip --strip-all '{}' + || true
 
-FROM alpine
+FROM alpine:edge
 
 RUN set -x \
 	&& addgroup -g 48 -S www-data \

@@ -1,4 +1,6 @@
 # This is only useful if you wish to compile your own GCC from git for GCC9
+# Will no longer be used since GCC 9.2 is now available in alpine:edge.
+# May be useful you really want some super-bleeding edge GCC (like, from current git)
 
 FROM alpine as gcc-builder
 
