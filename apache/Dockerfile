@@ -11,7 +11,7 @@ FROM lean-hap_builder as apache-builder
 ENV HTTPD_VERSION 2.4.41
 ENV MODFCGID_VERSION 2.3.9
 ENV APR_VERSION 1.7.0
-ENV APRUTIL_VERSION 1.7.0
+ENV APRUTIL_VERSION 1.6.1
 ENV PCRE_VERSION 8.43
 
 ENV LIBEXPAT_URL https://github.com/libexpat/libexpat/releases/download/R_2_2_6/expat-2.2.6.tar.bz2
